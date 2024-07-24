@@ -8,3 +8,4 @@ mock
 pandas
 python-docx
 python-dotenv
+openai
