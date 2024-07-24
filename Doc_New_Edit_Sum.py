@@ -19,7 +19,6 @@ openai.api_key = openai_api_key
 generation_config = {
     "temperature": 0.4,
     "top_p": 0.95,
-    "top_k": 0,
 }
 
 # 사이드바에서 모델 선택
@@ -69,8 +68,8 @@ if generate_document and keyword:
             if 'result_text' not in st.session_state:
                 st.session_state.result_text = ""
             result_text = st.empty()
-            result_text.success(response.choices[0].message["content"].strip())
-            st.session_state.result_text = response.choices[0].message["content"].strip()
+            result_text.success(response['choices'][0]['message']['content'].strip())
+            st.session_state.result_text = response['choices'][0]['message']['content'].strip()
             with st.expander("📋 마크다운 복사"):
                 st.code(st.session_state.result_text, language='markdown')
         except Exception as e:
@@ -142,8 +141,8 @@ if doc_text_edit:
                 if 'edited_text' not in st.session_state:
                     st.session_state.edited_text = ""
                 edited_text = st.empty()
-                edited_text.success(response.choices[0].message["content"].strip())
-                st.session_state.edited_text = response.choices[0].message["content"].strip()
+                edited_text.success(response['choices'][0]['message']['content'].strip())
+                st.session_state.edited_text = response['choices'][0]['message']['content'].strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.edited_text, language='markdown')
             except Exception as e:
@@ -215,8 +214,8 @@ if doc_text_sum:
                 if 'summarized_text' not in st.session_state:
                     st.session_state.summarized_text = ""
                 summarized_text = st.empty()
-                summarized_text.success(response.choices[0].message["content"].strip())
-                st.session_state.summarized_text = response.choices[0].message["content"].strip()
+                summarized_text.success(response['choices'][0]['message']['content'].strip())
+                st.session_state.summarized_text = response['choices'][0]['message']['content'].strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.summarized_text, language='markdown')
             except Exception as e:
