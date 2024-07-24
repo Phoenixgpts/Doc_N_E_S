@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 from docx import Document
 from io import BytesIO
 import os
@@ -11,10 +11,10 @@ st.set_page_config(
 )
 
 # API 키를 직접 코드에 넣기 (보안상 권장되지 않음)
-openai_api_key = "sk-None-DnkIF7t8xcSO2iU3Pp53T3BlbkFJv4wJHnxi4yjPJBnDjuxo"
+openai_api_key = "sk-None-4wJHnxi4yjPJBnDjuxoD3BlbkFJvnkIF7t8xcSO2iU3Pp53T"
 
-# OpenAI API 키 설정
-openai.api_key = openai_api_key
+# OpenAI 클라이언트 초기화
+client = OpenAI(api_key=openai_api_key)
 
 generation_config = {
     "temperature": 0.4,
@@ -23,7 +23,7 @@ generation_config = {
 
 # 사이드바에서 모델 선택
 model_selection = st.sidebar.radio("**사용할 모델을 선택하세요 :**", ("Phoenix-GPT4o", "Phoenix-GPT4o-Mini"), captions=("가격↑/성능↑/속도↓", "가격↓/성능↓/속도↑"))
-model_name = "gpt-4" if model_selection == "gpt-4o" else "gpt-4-mini"
+model_name = "gpt-4" if model_selection == "Phoenix-GPT4o" else "gpt-4-turbo-preview"
 
 st.title("Document NEW + EDIT + SUM")
 st.caption("By Phoenix AI")
@@ -54,7 +54,7 @@ if generate_document and keyword:
     with st.spinner("문서를 생성하는 중입니다..."):
         system_instruction = language_prompts[output_language_new]
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=model_name,
                 messages=[
                     {"role": "system", "content": system_instruction},
@@ -68,8 +68,8 @@ if generate_document and keyword:
             if 'result_text' not in st.session_state:
                 st.session_state.result_text = ""
             result_text = st.empty()
-            result_text.success(response['choices'][0]['message']['content'].strip())
-            st.session_state.result_text = response['choices'][0]['message']['content'].strip()
+            result_text.success(response.choices[0].message.content.strip())
+            st.session_state.result_text = response.choices[0].message.content.strip()
             with st.expander("📋 마크다운 복사"):
                 st.code(st.session_state.result_text, language='markdown')
         except Exception as e:
@@ -80,7 +80,6 @@ if generate_document and keyword:
         document = Document()
         document.add_heading('Generated Document', level=1)
         document.add_paragraph(st.session_state.result_text)
-        # BytesIO 객체를 사용하여 문서를 메모리에 저장
         buffer = BytesIO()
         document.save(buffer)
         buffer.seek(0)
@@ -127,7 +126,7 @@ if doc_text_edit:
         with st.spinner("문서를 수정하는 중입니다..."):
             system_instruction = language_prompts[output_language_edit]
             try:
-                response = openai.ChatCompletion.create(
+                response = client.chat.completions.create(
                     model=model_name,
                     messages=[
                         {"role": "system", "content": system_instruction},
@@ -141,8 +140,8 @@ if doc_text_edit:
                 if 'edited_text' not in st.session_state:
                     st.session_state.edited_text = ""
                 edited_text = st.empty()
-                edited_text.success(response['choices'][0]['message']['content'].strip())
-                st.session_state.edited_text = response['choices'][0]['message']['content'].strip()
+                edited_text.success(response.choices[0].message.content.strip())
+                st.session_state.edited_text = response.choices[0].message.content.strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.edited_text, language='markdown')
             except Exception as e:
@@ -153,7 +152,6 @@ if doc_text_edit:
             edited_document = Document()
             edited_document.add_heading('Edited Document', level=1)
             edited_document.add_paragraph(st.session_state.edited_text)
-            # BytesIO 객체를 사용하여 문서를 메모리에 저장
             buffer = BytesIO()
             edited_document.save(buffer)
             buffer.seek(0)
@@ -200,7 +198,7 @@ if doc_text_sum:
         with st.spinner("문서를 요약하는 중입니다..."):
             system_instruction = language_prompts[output_language_sum]
             try:
-                response = openai.ChatCompletion.create(
+                response = client.chat.completions.create(
                     model=model_name,
                     messages=[
                         {"role": "system", "content": system_instruction},
@@ -214,8 +212,8 @@ if doc_text_sum:
                 if 'summarized_text' not in st.session_state:
                     st.session_state.summarized_text = ""
                 summarized_text = st.empty()
-                summarized_text.success(response['choices'][0]['message']['content'].strip())
-                st.session_state.summarized_text = response['choices'][0]['message']['content'].strip()
+                summarized_text.success(response.choices[0].message.content.strip())
+                st.session_state.summarized_text = response.choices[0].message.content.strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.summarized_text, language='markdown')
             except Exception as e:
@@ -226,7 +224,6 @@ if doc_text_sum:
             summarized_document = Document()
             summarized_document.add_heading('Summarized Document', level=1)
             summarized_document.add_paragraph(st.session_state.summarized_text)
-            # BytesIO 객체를 사용하여 문서를 메모리에 저장
             buffer = BytesIO()
             summarized_document.save(buffer)
             buffer.seek(0)
