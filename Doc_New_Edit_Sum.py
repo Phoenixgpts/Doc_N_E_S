@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # API 키를 직접 코드에 넣기 (보안상 권장되지 않음)
-openai_api_key = "sk-None-4wJHnxi4yjPJBnDjuxoD3BlbkFJvnkIF7t8xcSO2iU3Pp53T"
+openai_api_key = "sk-None-DnkIF7t8xcSO2iU3Pp53T3BlbkFJv4wJHnxi4yjPJBnDjuxo"
 
 # OpenAI 클라이언트 초기화
 client = OpenAI(api_key=openai_api_key)
@@ -23,7 +23,7 @@ generation_config = {
 
 # 사이드바에서 모델 선택
 model_selection = st.sidebar.radio("**사용할 모델을 선택하세요 :**", ("Phoenix-GPT4o", "Phoenix-GPT4o-Mini"), captions=("가격↑/성능↑/속도↓", "가격↓/성능↓/속도↑"))
-model_name = "gpt-4" if model_selection == "Phoenix-GPT4o" else "gpt-4-turbo-preview"
+model_name = "gpt-4" if model_selection == "gpt-4o" else "gpt-4o-mini"
 
 st.title("Document NEW + EDIT + SUM")
 st.caption("By Phoenix AI")
