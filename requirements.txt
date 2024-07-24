@@ -9,3 +9,4 @@ pandas
 python-docx
 python-dotenv
 openai
+pip install tiktoken
