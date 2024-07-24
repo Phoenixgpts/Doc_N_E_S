@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # API 키를 직접 코드에 넣기 (보안상 권장되지 않음)
-openai_api_key = "sk-None-DnkIF7t8xcSO2iU3Pp53T3BlbkFJv4wJHnxi4yjPJBnDjuxo"
+openai_api_key = "sk-None-SvWWOSnbQl6knErR5U3PT3BlbkFJ7NBfzoOCLK33yCePgCQ9"
 
 # OpenAI 클라이언트 초기화
 client = OpenAI(api_key=openai_api_key)
