@@ -9,13 +9,13 @@ from dotenv import load_dotenv
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
+# API 키를 환경 변수에서 가져오기
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
 st.set_page_config(
     page_title="Document NEW + EDIT + SUM",
     page_icon="📄",
 )
-
-# API 키를 환경 변수에서 가져오기
-openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # OpenAI 클라이언트 초기화
 client = OpenAI(api_key=openai_api_key)
