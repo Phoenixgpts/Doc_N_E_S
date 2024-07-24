@@ -4,14 +4,18 @@ from docx import Document
 from io import BytesIO
 import os
 import requests
+from dotenv import load_dotenv
+
+# .env 파일에서 환경 변수 로드
+load_dotenv()
 
 st.set_page_config(
     page_title="Document NEW + EDIT + SUM",
     page_icon="📄",
 )
 
-# API 키를 직접 코드에 넣기 (보안상 권장되지 않음)
-openai_api_key = "sk-None-SvWWOSnbQl6knErR5U3PT3BlbkFJ7NBfzoOCLK33yCePgCQ9"
+# API 키를 환경 변수에서 가져오기
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # OpenAI 클라이언트 초기화
 client = OpenAI(api_key=openai_api_key)
