@@ -10,8 +10,8 @@ st.set_page_config(
     page_icon="📄",
 )
 
-# API 키를 환경 변수에서 가져옵니다
-openai_api_key = os.environ.get("sk-None-DnkIF7t8xcSO2iU3Pp53T3BlbkFJv4wJHnxi4yjPJBnDjuxo")
+# API 키를 직접 코드에 넣기 (보안상 권장되지 않음)
+openai_api_key = "sk-None-DnkIF7t8xcSO2iU3Pp53T3BlbkFJv4wJHnxi4yjPJBnDjuxo"
 
 # OpenAI API 키 설정
 openai.api_key = openai_api_key
@@ -24,7 +24,7 @@ generation_config = {
 
 # 사이드바에서 모델 선택
 model_selection = st.sidebar.radio("**사용할 모델을 선택하세요 :**", ("Phoenix-GPT4o", "Phoenix-GPT4o-Mini"), captions=("가격↑/성능↑/속도↓", "가격↓/성능↓/속도↑"))
-model_name = "gpt-4" if model_selection == "GPT4o" else "gpt-4-mini"
+model_name = "gpt-4" if model_selection == "GPT-4o" else "gpt-4-mini"
 
 st.title("Document NEW + EDIT + SUM")
 st.caption("By Phoenix AI")
@@ -70,7 +70,7 @@ if generate_document and keyword:
             st.session_state.result_text = response.choices[0].text.strip()
             with st.expander("📋 마크다운 복사"):
                 st.code(st.session_state.result_text, language='markdown')
-        except openai.error.OpenAIError as e:
+        except Exception as e:
             st.error(f"오류가 발생했습니다: {str(e)}")
 
     # MS Word 문서 생성 및 다운로드 기능 추가
@@ -140,7 +140,7 @@ if doc_text_edit:
                 st.session_state.edited_text = response.choices[0].text.strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.edited_text, language='markdown')
-            except openai.error.OpenAIError as e:
+            except Exception as e:
                 st.error(f"오류가 발생했습니다: {str(e)}")
 
         # 수정된 MS Word 문서 생성 및 다운로드 기능 추가
@@ -168,14 +168,14 @@ if uploaded_file_sum:
     document = Document(uploaded_file_sum)
     doc_text_sum = "\n".join([para.text for para in document.paragraphs])
     st.header("요약할 문서 내용")
-    st.text_area("문서 내용", doc_text_sum, height=300)
+    st.text_area("요약할 문서 내용", doc_text_sum, height=300)
 elif uploaded_link_sum:
     try:
         response = requests.get(uploaded_link_sum)
         if response.status_code == 200:
             doc_text_sum = response.text
             st.header("요약할 문서 내용")
-            st.text_area("문서 내용", doc_text_sum, height=300)
+            st.text_area("요약할 문서 내용", doc_text_sum, height=300)
         else:
             st.error("문서 링크를 불러오는 데 실패했습니다.")
     except Exception as e:
@@ -210,7 +210,7 @@ if doc_text_sum:
                 st.session_state.summarized_text = response.choices[0].text.strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.summarized_text, language='markdown')
-            except openai.error.OpenAIError as e:
+            except Exception as e:
                 st.error(f"오류가 발생했습니다: {str(e)}")
 
         # 요약된 MS Word 문서 생성 및 다운로드 기능 추가
