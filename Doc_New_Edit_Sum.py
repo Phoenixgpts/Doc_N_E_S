@@ -24,7 +24,7 @@ generation_config = {
 
 # 사이드바에서 모델 선택
 model_selection = st.sidebar.radio("**사용할 모델을 선택하세요 :**", ("Phoenix-GPT4o", "Phoenix-GPT4o-Mini"), captions=("가격↑/성능↑/속도↓", "가격↓/성능↓/속도↑"))
-model_name = "gpt-4" if model_selection == "GPT-4o" else "gpt-4-mini"
+model_name = "gpt-4" if model_selection == "gpt-4o" else "gpt-4-mini"
 
 st.title("Document NEW + EDIT + SUM")
 st.caption("By Phoenix AI")
@@ -55,9 +55,12 @@ if generate_document and keyword:
     with st.spinner("문서를 생성하는 중입니다..."):
         system_instruction = language_prompts[output_language_new]
         try:
-            response = openai.Completion.create(
-                engine=model_name,
-                prompt=f"{system_instruction}\n\n{keyword}",
+            response = openai.ChatCompletion.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": keyword}
+                ],
                 max_tokens=2000,
                 temperature=generation_config["temperature"],
                 top_p=generation_config["top_p"]
@@ -66,8 +69,8 @@ if generate_document and keyword:
             if 'result_text' not in st.session_state:
                 st.session_state.result_text = ""
             result_text = st.empty()
-            result_text.success(response.choices[0].text.strip())
-            st.session_state.result_text = response.choices[0].text.strip()
+            result_text.success(response.choices[0].message["content"].strip())
+            st.session_state.result_text = response.choices[0].message["content"].strip()
             with st.expander("📋 마크다운 복사"):
                 st.code(st.session_state.result_text, language='markdown')
         except Exception as e:
@@ -125,9 +128,12 @@ if doc_text_edit:
         with st.spinner("문서를 수정하는 중입니다..."):
             system_instruction = language_prompts[output_language_edit]
             try:
-                response = openai.Completion.create(
-                    engine=model_name,
-                    prompt=f"{system_instruction}\n\n{edit_keyword}\n\n{doc_text_edit}",
+                response = openai.ChatCompletion.create(
+                    model=model_name,
+                    messages=[
+                        {"role": "system", "content": system_instruction},
+                        {"role": "user", "content": f"{edit_keyword}\n\n{doc_text_edit}"}
+                    ],
                     max_tokens=2000,
                     temperature=generation_config["temperature"],
                     top_p=generation_config["top_p"]
@@ -136,8 +142,8 @@ if doc_text_edit:
                 if 'edited_text' not in st.session_state:
                     st.session_state.edited_text = ""
                 edited_text = st.empty()
-                edited_text.success(response.choices[0].text.strip())
-                st.session_state.edited_text = response.choices[0].text.strip()
+                edited_text.success(response.choices[0].message["content"].strip())
+                st.session_state.edited_text = response.choices[0].message["content"].strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.edited_text, language='markdown')
             except Exception as e:
@@ -195,9 +201,12 @@ if doc_text_sum:
         with st.spinner("문서를 요약하는 중입니다..."):
             system_instruction = language_prompts[output_language_sum]
             try:
-                response = openai.Completion.create(
-                    engine=model_name,
-                    prompt=f"{system_instruction}\n\n{sum_keyword}\n\n{doc_text_sum}",
+                response = openai.ChatCompletion.create(
+                    model=model_name,
+                    messages=[
+                        {"role": "system", "content": system_instruction},
+                        {"role": "user", "content": f"{sum_keyword}\n\n{doc_text_sum}"}
+                    ],
                     max_tokens=2000,
                     temperature=generation_config["temperature"],
                     top_p=generation_config["top_p"]
@@ -206,8 +215,8 @@ if doc_text_sum:
                 if 'summarized_text' not in st.session_state:
                     st.session_state.summarized_text = ""
                 summarized_text = st.empty()
-                summarized_text.success(response.choices[0].text.strip())
-                st.session_state.summarized_text = response.choices[0].text.strip()
+                summarized_text.success(response.choices[0].message["content"].strip())
+                st.session_state.summarized_text = response.choices[0].message["content"].strip()
                 with st.expander("📋 마크다운 복사"):
                     st.code(st.session_state.summarized_text, language='markdown')
             except Exception as e:
