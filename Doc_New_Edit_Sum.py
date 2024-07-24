@@ -19,18 +19,12 @@ if not openai_api_key:
     st.error("OpenAI API 키가 설정되지 않았습니다. 환경 변수를 확인해주세요.")
     st.stop()
 
-st.set_page_config(
-    page_title="Document NEW + EDIT + SUM",
-    page_icon="📄",
-)
+st.set_page_config(page_title="Document NEW + EDIT + SUM", page_icon="📄")
 
 # OpenAI 클라이언트 초기화
 client = OpenAI(api_key=openai_api_key)
 
-generation_config = {
-    "temperature": 0.4,
-    "top_p": 0.95,
-}
+generation_config = {"temperature": 0.4, "top_p": 0.95}
 
 # 사이드바에서 모델 선택
 model_selection = st.sidebar.radio("**사용할 모델을 선택하세요 :**", ("Phoenix-GPT4o", "Phoenix-GPT4o-Mini"), captions=("가격↑/성능↑/속도↓", "가격↓/성능↓/속도↑"))
@@ -43,11 +37,9 @@ def split_text(text: str, max_tokens: int = 8000) -> List[str]:
     encoding = tiktoken.get_encoding("cl100k_base")
     tokens = encoding.encode(text)
     chunks = []
-    
     for i in range(0, len(tokens), max_tokens):
         chunk = encoding.decode(tokens[i:i + max_tokens])
         chunks.append(chunk)
-    
     return chunks
 
 language_prompts = {
@@ -100,7 +92,6 @@ elif uploaded_link_edit:
         st.error("문서 링크를 불러오는 데 실패했습니다.")
 
 if doc_text_edit:
-    st.text_area("문서 내용", doc_text_edit, height=300)
     edit_keyword = st.text_input("수정할 키워드 또는 문장을 입력해 주세요:")
     output_language_edit = st.selectbox("수정한 문서의 출력 언어를 선택하세요:", list(language_prompts.keys()), key="edit_language")
     if st.button("문서 수정") and edit_keyword:
@@ -127,6 +118,8 @@ if doc_text_edit:
             edited_text = "\n\n".join(edited_chunks)
             st.session_state.edited_text = edited_text
             st.success(edited_text)
+    else:
+        st.info("죄송합니다, 키워드를 제공해주시면 해당 키워드에 대한 2,000자 길이의 문서를 생성해드리겠습니다.")
 
 # 3. Doc-SUM
 st.header("3. Doc-SUM")
@@ -144,7 +137,6 @@ elif uploaded_link_sum:
         st.error("문서 링크를 불러오는 데 실패했습니다.")
 
 if doc_text_sum:
-    st.text_area("요약할 문서 내용", doc_text_sum, height=300)
     sum_keyword = st.text_input("요약할 키워드 또는 문장을 입력해 주세요:")
     output_language_sum = st.selectbox("요약한 문서의 출력 언어를 선택하세요:", list(language_prompts.keys()), key="sum_language")
     if st.button("문서 요약") and sum_keyword:
@@ -185,3 +177,5 @@ if doc_text_sum:
 
             st.session_state.summarized_text = summarized_text
             st.success(summarized_text)
+    else:
+        st.info("죄송합니다, 키워드를 제공해주시면 해당 키워드에 대한 2,000자 길이의 문서를 생성해드리겠습니다.")
