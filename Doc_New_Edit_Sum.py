@@ -129,26 +129,24 @@ if doc_text_edit:
     edit_document = st.button("문서 수정")
     if edit_document and edit_keyword:
         with st.spinner("문서를 수정하는 중입니다..."):
-            system_instruction = language_prompts[output_language_edit]
+            system_instruction = f"주어진 문서를 다음 키워드나 문장에 맞게 수정하세요: {edit_keyword}. 수정된 문서를 {output_language_edit}로 작성하세요."
             try:
                 response = client.chat.completions.create(
                     model=model_name,
                     messages=[
                         {"role": "system", "content": system_instruction},
-                        {"role": "user", "content": f"{edit_keyword}\n\n{doc_text_edit}"}
+                        {"role": "user", "content": doc_text_edit}
                     ],
                     max_tokens=2000,
                     temperature=generation_config["temperature"],
                     top_p=generation_config["top_p"]
                 )
                 
-                if 'edited_text' not in st.session_state:
-                    st.session_state.edited_text = ""
-                edited_text = st.empty()
-                edited_text.success(response.choices[0].message.content.strip())
-                st.session_state.edited_text = response.choices[0].message.content.strip()
+                edited_text = response.choices[0].message.content.strip()
+                st.session_state.edited_text = edited_text
+                st.success(edited_text)
                 with st.expander("📋 마크다운 복사"):
-                    st.code(st.session_state.edited_text, language='markdown')
+                    st.code(edited_text, language='markdown')
             except Exception as e:
                 st.error(f"오류가 발생했습니다: {str(e)}")
 
@@ -203,26 +201,24 @@ if doc_text_sum:
     sum_document = st.button("문서 요약")
     if sum_document and sum_keyword:
         with st.spinner("문서를 요약하는 중입니다..."):
-            system_instruction = language_prompts[output_language_sum]
+            system_instruction = f"주어진 문서를 다음 키워드나 문장을 중심으로 요약하세요: {sum_keyword}. 요약된 문서를 {output_language_sum}로 작성하세요."
             try:
                 response = client.chat.completions.create(
                     model=model_name,
                     messages=[
                         {"role": "system", "content": system_instruction},
-                        {"role": "user", "content": f"{sum_keyword}\n\n{doc_text_sum}"}
+                        {"role": "user", "content": doc_text_sum}
                     ],
                     max_tokens=2000,
                     temperature=generation_config["temperature"],
                     top_p=generation_config["top_p"]
                 )
                 
-                if 'summarized_text' not in st.session_state:
-                    st.session_state.summarized_text = ""
-                summarized_text = st.empty()
-                summarized_text.success(response.choices[0].message.content.strip())
-                st.session_state.summarized_text = response.choices[0].message.content.strip()
+                summarized_text = response.choices[0].message.content.strip()
+                st.session_state.summarized_text = summarized_text
+                st.success(summarized_text)
                 with st.expander("📋 마크다운 복사"):
-                    st.code(st.session_state.summarized_text, language='markdown')
+                    st.code(summarized_text, language='markdown')
             except Exception as e:
                 st.error(f"오류가 발생했습니다: {str(e)}")
 
